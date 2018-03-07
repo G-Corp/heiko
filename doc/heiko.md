@@ -34,12 +34,21 @@ queue() = atom()
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#create_queue-2">create_queue/2</a></td><td></td></tr><tr><td valign="top"><a href="#delete_queue-1">delete_queue/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue-3">queue/3</a></td><td></td></tr><tr><td valign="top"><a href="#queue-4">queue/4</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-1">queue_size/1</a></td><td></td></tr><tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr><tr><td valign="top"><a href="#update_queue-2">update_queue/2</a></td><td></td></tr><tr><td valign="top"><a href="#workers-1">workers/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#active_workers-1">active_workers/1</a></td><td></td></tr><tr><td valign="top"><a href="#create_queue-2">create_queue/2</a></td><td></td></tr><tr><td valign="top"><a href="#delete_queue-1">delete_queue/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue-3">queue/3</a></td><td></td></tr><tr><td valign="top"><a href="#queue-4">queue/4</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-1">queue_size/1</a></td><td></td></tr><tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr><tr><td valign="top"><a href="#update_queue-2">update_queue/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
+
+<a name="active_workers-1"></a>
+
+### active_workers/1 ###
+
+<pre><code>
+active_workers(Name::<a href="#type-queue">queue()</a>) -&gt; integer()
+</code></pre>
+<br />
 
 <a name="create_queue-2"></a>
 
@@ -98,15 +107,6 @@ queue_size(Name::<a href="#type-queue">queue()</a>) -&gt; integer()
 
 <pre><code>
 update_queue(Name::<a href="#type-queue">queue()</a>, Params::<a href="#type-options">options()</a>) -&gt; ok | {error, term()}
-</code></pre>
-<br />
-
-<a name="workers-1"></a>
-
-### workers/1 ###
-
-<pre><code>
-workers(Name::<a href="#type-queue">queue()</a>) -&gt; integer()
 </code></pre>
 <br />
 
