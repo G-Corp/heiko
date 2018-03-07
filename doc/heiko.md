@@ -54,7 +54,10 @@ create_queue(Name::<a href="#type-queue">queue()</a>, Params::<a href="#type-opt
 
 ### delete_queue/1 ###
 
-`delete_queue(Name) -> any()`
+<pre><code>
+delete_queue(Name::<a href="#type-queue">queue()</a>) -&gt; ok
+</code></pre>
+<br />
 
 <a name="queue-3"></a>
 
