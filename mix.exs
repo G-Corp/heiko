@@ -23,7 +23,7 @@ defmodule Heiko.Mixfile do
 
   defp deps do
     [
-      {:lager, "~> 3.2.0"}
+      {:lager, "~> 3.6"}
     ]
   end
 
