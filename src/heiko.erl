@@ -6,6 +6,7 @@
          , delete_queue/1
          , update_queue/2
          , queue_size/1
+         , workers/1
          , queue/3
          , queue/4
         ]).
@@ -32,11 +33,13 @@ delete_queue(Name) ->
 queue_size(Name) ->
   gen_server:call(heiko_queues, {queue_size, Name}).
 
+-spec workers(Name::queue()) -> integer().
+workers(Name) ->
+  gen_server:call(heiko_queues, {workers, Name}).
+
 -spec queue(Queue::queue(), Fun::function(), Args::list()) -> ok | {error, term()}.
 queue(Queue, Fun, Args) when is_function(Fun, length(Args)) ->
-  gen_server:call(heiko_queues, {queue, Queue, Fun, Args});
-queue(_Queue, _Ref, _Args) ->
-  ok.
+  gen_server:call(heiko_queues, {queue, Queue, Fun, Args}).
 
 -spec queue(Queue::queue(), Module::module(), Function::atom(), Args::list()) -> ok | {error, term()}.
 queue(Queue, Module, Function, Args) ->

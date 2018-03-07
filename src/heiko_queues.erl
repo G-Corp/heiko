@@ -52,6 +52,13 @@ handle_call({queue_size, Queue}, _From, {Queues, _Refs} = State) ->
     #{monitor := Pid} ->
       {reply, gen_server:call(Pid, queue_size), State}
   end;
+handle_call({workers, Queue}, _From, {Queues, _Refs} = State) ->
+  case maps:get(Queue, Queues, undefined) of
+    undefined ->
+      {reply, 0, State};
+    #{monitor := Pid} ->
+      {reply, gen_server:call(Pid, workers), State}
+  end;
 handle_call({get_pid, Name, Type}, _From, {Queues, _Refs} = State) ->
   {reply, maps:get(Type, maps:get(Name, Queues)), State};
 handle_call(_Request, _From, State) ->

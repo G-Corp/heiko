@@ -41,6 +41,8 @@ init([Name, Args]) ->
 % @hidden
 handle_call(queue_size, _From, #{queue := Queue} = State) ->
   {reply, queue:len(Queue), State};
+handle_call(workers, _From, #{workers := Workers} = State) ->
+  {reply, erlang:length(Workers), State};
 handle_call({update, Params}, _From, State) ->
   {reply, ok, maps:merge(State, maps:from_list(Params))};
 handle_call(_Request, _From, State) ->

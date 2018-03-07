@@ -18,6 +18,9 @@ defmodule Heiko do
   def unquote(:"queue_size")(arg1) do
     :erlang.apply(:"heiko", :"queue_size", [arg1])
   end
+  def unquote(:"workers")(arg1) do
+    :erlang.apply(:"heiko", :"workers", [arg1])
+  end
   def unquote(:"queue")(arg1, arg2, arg3) do
     :erlang.apply(:"heiko", :"queue", [arg1, arg2, arg3])
   end
