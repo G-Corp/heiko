@@ -23,7 +23,7 @@ start_link(Name, Args) ->
 % @hidden
 init([Name, Args]) ->
   lager:debug("Start monitor for queue ~p with ~p", [Name, Args]),
-  gen_server:cast(heiko_queues, {register, Name, monitor, self()}),
+  heiko_registry:queue_monitor(Name, self()),
   {
    ok,
    maps:merge(
@@ -39,27 +39,28 @@ init([Name, Args]) ->
   }.
 
 % @hidden
-handle_call(queue_size, _From, #{queue := Queue} = State) ->
-  {reply, queue:len(Queue), State};
-handle_call(workers, _From, #{workers := Workers} = State) ->
-  {reply, erlang:length(Workers), State};
-handle_call({update, Params}, _From, State) ->
-  {reply, ok, maps:merge(State, maps:from_list(Params))};
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
 
 % @hidden
-handle_cast({queue, From, Fun, Args}, #{queue := Queue, terminate := false} = State) ->
+handle_cast({queue, From, Fun, Args}, #{name := Name, queue := Queue, terminate := false} = State) ->
   gen_server:reply(From, ok),
-  {noreply, execute(State#{queue => queue:in({Fun, Args}, Queue)})};
+  Queue1 = queue:in({Fun, Args}, Queue),
+  heiko_registry:queue_size(Name, queue:len(Queue1)),
+  {noreply, execute(State#{queue => Queue1})};
+handle_cast({update, From, Params}, State) ->
+  gen_server:reply(From, ok),
+  {noreply, maps:merge(State, maps:from_list(Params))};
 handle_cast({queue, From, _Fun, _Args}, State) ->
   gen_server:reply(From, {error, queue_terminated}),
   {noreply, State};
 handle_cast({terminate, Child}, #{workers := Workers, name := Name} = State) ->
-  WorkerSupervisorPid = gen_server:call(heiko_queues, {get_pid, Name, supervisor}),
+  WorkerSupervisorPid = heiko_registry:queue_supervisor(Name),
   heiko_queue_workers_sup:stop_child(WorkerSupervisorPid, Child),
-  {noreply, execute(State#{workers => lists:delete(Child, Workers)})};
+  Workers1 = lists:delete(Child, Workers),
+  heiko_registry:queue_workers(Name, erlang:length(Workers1)),
+  {noreply, execute(State#{workers => Workers1})};
 handle_cast(delete, State) ->
   erlang:send_after(1000, self(), terminate_queue),
   {noreply, State#{terminate => true}};
@@ -89,12 +90,15 @@ execute(#{workers := Workers, max_workers := MaxWorkers} = State) when length(Wo
 execute(#{workers := Workers, queue := Queue, name := Name} = State) ->
   case queue:out(Queue) of
     {{value, {Function, Args}}, Queue1} ->
-      WorkerSupervisorPid = gen_server:call(heiko_queues, {get_pid, Name, supervisor}),
+      heiko_registry:queue_size(Name, queue:len(Queue1)),
+      WorkerSupervisorPid = heiko_registry:queue_supervisor(Name),
       case heiko_queue_workers_sup:start_child(WorkerSupervisorPid, [self(), Function, Args]) of
         {ok, Child} ->
+          Workers1 = [Child|Workers],
+          heiko_registry:queue_workers(Name, erlang:length(Workers1)),
           lager:debug("Will execute ~p [~p] supervized by ~p", [Function, Args, WorkerSupervisorPid]),
           gen_server:cast(Child, execute),
-          execute(State#{queue => Queue1, workers => [Child|Workers]});
+          execute(State#{queue => Queue1, workers => Workers1});
         Other ->
           lager:error("Can't start worker for ~p: ~p", [Name, Other]),
           State

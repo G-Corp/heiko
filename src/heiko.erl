@@ -31,11 +31,11 @@ delete_queue(Name) ->
 
 -spec queue_size(Name::queue()) -> integer().
 queue_size(Name) ->
-  gen_server:call(heiko_queues, {queue_size, Name}).
+  heiko_registry:queue_size(Name).
 
 -spec active_workers(Name::queue()) -> integer().
 active_workers(Name) ->
-  gen_server:call(heiko_queues, {workers, Name}).
+  heiko_registry:queue_workers(Name).
 
 -spec queue(Queue::queue(), Fun::function(), Args::list()) -> ok | {error, term()}.
 queue(Queue, Fun, Args) when is_function(Fun, length(Args)) ->

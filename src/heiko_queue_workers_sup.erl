@@ -23,8 +23,8 @@ start_child(SupervisorPid, Args) when is_pid(SupervisorPid) ->
   end.
 
 init([Name, Args]) ->
+  heiko_registry:queue_supervisor(Name, self()),
   lager:debug("Start worker supervisor for queue ~p with ~p", [Name, Args]),
-  gen_server:cast(heiko_queues, {register, Name, supervisor, self()}),
   {ok, {
      #{strategy => simple_one_for_one,
        intensity => 0,

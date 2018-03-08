@@ -17,8 +17,10 @@ stop_child(Pid) when is_pid(Pid) ->
 
 start_child(Args) ->
   case supervisor:start_child(?MODULE, [Args]) of
-    {ok, Child, _} -> {ok, Child};
-    Other -> Other
+    {ok, Child, _} ->
+      {ok, Child};
+    Other ->
+      Other
   end.
 
 init([]) ->
